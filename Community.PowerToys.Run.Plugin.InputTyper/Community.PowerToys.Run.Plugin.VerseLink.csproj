@@ -49,11 +49,29 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
   <ItemGroup>
-    <None Update="Images\InputTyper.light.png">
+    <Reference Include="PowerToys.Common.UI">
+      <HintPath>Libs\x64\PowerToys.Common.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerToys.ManagedCommon">
+      <HintPath>Libs\x64\PowerToys.ManagedCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerToys.Settings.UI.Lib">
+      <HintPath>Libs\x64\PowerToys.Settings.UI.Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Wox.Infrastructure">
+      <HintPath>Libs\x64\Wox.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Wox.Plugin">
+      <HintPath>Libs\x64\Wox.Plugin.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Images\VerseLink.light.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Images\InputTyper.dark.png">
+    <None Update="Images\VerseLink.dark.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

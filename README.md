@@ -19,3 +19,6 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 - Input: "^^ \<reference\>" or "^^" for clipboard
 - Select the result (ENTER)
 - \<verse\> is typed into the selected location
+
+## Credit
+- This is a fork of Corey Hayward's InsertText Project

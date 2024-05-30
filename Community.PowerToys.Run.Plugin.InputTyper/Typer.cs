@@ -1,4 +1,4 @@
-﻿// Copyright (c) Corey Hayward. All rights reserved.
+﻿// Copyright (c) Seth Twigg. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clipboard = System.Windows.Clipboard;

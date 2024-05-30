@@ -1,4 +1,4 @@
-﻿// Copyright (c) Corey Hayward. All rights reserved.
+﻿// Copyright (c) Seth Twigg. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using ManagedCommon;
@@ -18,7 +18,7 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
 
         public string Description => "Types the input text.";
 
-        public static string PluginID => "10733f2de88e4348aa7a340d25ebcca2";
+        public static string PluginID => "0000000000000000000000000000001";
 
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
@@ -87,11 +87,11 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
         {
             if (theme == Theme.Light || theme == Theme.HighContrastWhite)
             {
-                _icon_path = "Images/InputTyper.light.png";
+                _icon_path = "Images/VerseLink.light.png";
             }
             else
             {
-                _icon_path = "Images/InputTyper.dark.png";
+                _icon_path = "Images/VerseLink.dark.png";
             }
         }
 

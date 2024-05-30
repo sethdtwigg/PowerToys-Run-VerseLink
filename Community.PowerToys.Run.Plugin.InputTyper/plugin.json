@@ -1,13 +1,13 @@
 ﻿{
-  "ID": "10733f2de88e4348aa7a340d25ebcca2",
-  "ActionKeyword": "@@",
+  "ID": "0000000000000000000000000000001",
+  "ActionKeyword": "^^",
   "IsGlobal": false,
-  "Name": "InputTyper",
-  "Author": "Corey Hayward",
-  "Version": "0.2.0",
+  "Name": "VerseLink",
+  "Author": "Seth Twigg",
+  "Version": "0.0.1",
   "Language": "csharp",
-  "Website": "https://github.com/CoreyHayward/PowerToys-Run-InputTyper",
-  "IcoPathDark": "Images\\InputTyper.dark.png",
-  "IcoPathLight": "Images\\InputTyper.light.png",
-  "ExecuteFileName": "Community.PowerToys.Run.Plugin.InputTyper.dll"
+  "Website": "https://github.com/sethdtwigg/PowerToys-Run-VerseLink",
+  "IcoPathDark": "Images\\VerseLink.dark.png",
+  "IcoPathLight": "Images\\VerseLink.light.png",
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.VerseLink.dll"
 }
