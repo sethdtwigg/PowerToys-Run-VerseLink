@@ -10,7 +10,7 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 
 ## Installation
 
-- Download the [latest release](https://github.com/CoreyHayward/PowerToys-Run-InputTyper/releases/) by selecting the architecture that matches your machine: `x64` (more common) or `ARM64`
+- Download the latest release by selecting the architecture that matches your machine.
 - Close PowerToys
 - Extract the archive to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins`
 - Open PowerToys
@@ -18,6 +18,6 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 ## Usage
 - Select/Place cursor where text should be typed 
 - Open PowerToys Run
-- Input: "@@ \<text\>" or "@@" for clipboard
+- Input: "^^ \<reference\>" or "^^" for clipboard
 - Select the result (ENTER)
-- \<text\> is typed into the selected location
+- \<verse\> is typed into the selected location
