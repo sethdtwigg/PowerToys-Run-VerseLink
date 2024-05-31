@@ -22,3 +22,4 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 
 ## Credit
 - This is a fork of Corey Hayward's InsertText Project
+- https://github.com/CoreyHayward/PowerToys-Run-InputTyper
