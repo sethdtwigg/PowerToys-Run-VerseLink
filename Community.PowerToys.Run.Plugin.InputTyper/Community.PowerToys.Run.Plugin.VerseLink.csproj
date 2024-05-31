@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <RootNamespace>Community.PowerToys.Run.Plugin.InputTyper</RootNamespace>
-    <AssemblyName>Community.PowerToys.Run.Plugin.InputTyper</AssemblyName>
-    <Version>0.2.0</Version>
+    <RootNamespace>Community.PowerToys.Run.Plugin.VerseLink</RootNamespace>
+    <AssemblyName>Community.PowerToys.Run.Plugin.VerseLink</AssemblyName>
+    <Version>0.0.1</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Platforms>AnyCPU;x64;ARM64</Platforms>

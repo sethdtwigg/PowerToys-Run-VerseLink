@@ -14,11 +14,11 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
         private string _icon_path;
         private int _beginTypeDelay;
 
-        public string Name => "InputTyper";
+        public string Name => "VerseLink";
 
-        public string Description => "Types the input text.";
+        public string Description => "Types the Verse text for the given reference.";
 
-        public static string PluginID => "0000000000000000000000000000001";
+        public static string PluginID => "53a0ea3fe92e3cb5af0dc68fe619f5e1";
 
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
@@ -27,9 +27,17 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
                 Key = "BeginTypeDelay",
                 DisplayLabel = "Begin Type Delay (ms)",
                 DisplayDescription = "Sets how long in milliseconds to wait before typing begins.",
-                NumberValue = 200,
+                NumberValue = 0,
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
             },
+            //new PluginAdditionalOption()
+            //{
+            //    Key = "BibleVersion",
+            //    DisplayLabel = "Bible Version",
+            //    DisplayDescription = "Select the Bible Translation you would like the verse to be typed.",
+            //    NumberValue = 0,
+            //    PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
+            //}
         };
 
         public void Init(PluginInitContext context)
@@ -50,8 +58,8 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
                 var text = query.Search.Trim();
                 results.Add(new Result
                 {
-                    Title = $"Type: {text}",
-                    SubTitle = "Types the text into the selected input.",
+                    Title = $"Reference: {text}",
+                    SubTitle = "Types the verse for the given reference into the selected input.",
                     IcoPath = _icon_path,
                     Action = c =>
                     {
@@ -64,8 +72,8 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
             {
                 results.Add(new Result
                 {
-                    Title = "Type Clipboard",
-                    SubTitle = "Types the current clipboard into the selected input.",
+                    Title = "Reference Clipboard",
+                    SubTitle = "Types the verse for the reference stored in clipboard into the selected input.",
                     IcoPath = _icon_path,
                     Action = c =>
                     {

@@ -8,7 +8,7 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
     internal sealed class Typer
     {
         private readonly char[] _specialCharacters = { '{', '}', '+', '^', '%', '~', '(', ')'  };
-        private const int INTERKEYDELAY = 20;
+        private const int INTERKEYDELAY = 0;
 
         public bool TypeEnter { get; set; } = true;
 
