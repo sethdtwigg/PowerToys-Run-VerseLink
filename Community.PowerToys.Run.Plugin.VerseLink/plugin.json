@@ -9,5 +9,6 @@
   "Website": "https://github.com/sethdtwigg/PowerToys-Run-VerseLink",
   "IcoPathDark": "Images\\VerseLink.dark.png",
   "IcoPathLight": "Images\\VerseLink.light.png",
-  "ExecuteFileName": "Community.PowerToys.Run.Plugin.VerseLink.dll"
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.VerseLink.dll",
+  "DynamicLoading": true
 }

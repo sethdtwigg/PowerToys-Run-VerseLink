@@ -1,11 +1,16 @@
 ﻿// Copyright (c) Seth Twigg. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//https://github.com/8LWXpg/PowerToysRun-PluginTemplate
+//https://conductofcode.io/post/creating-custom-powertoys-run-plugins/
 
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
+using System.Text;
+using System;
 using Wox.Plugin;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace Community.PowerToys.Run.Plugin.InputTyper
+namespace Community.PowerToys.Run.Plugin.VerseLink
 {
     public class Main : IPlugin, ISettingProvider
     {
@@ -13,6 +18,9 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
         private PluginInitContext _context;
         private string _icon_path;
         private int _beginTypeDelay;
+        private string _bibleversion;
+        private StringBuilder _verseText;
+        private StringBuilder _errMsg;
 
         public string Name => "VerseLink";
 
@@ -47,6 +55,9 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
             _context = context;
             _context.API.ThemeChanged += OnThemeChanged;
             UpdateIconPath(_context.API.GetCurrentTheme());
+
+            _verseText = new StringBuilder(5000000);
+            _errMsg = new StringBuilder(256);
         }
 
         public List<Result> Query(Query query)
@@ -63,7 +74,9 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
                     IcoPath = _icon_path,
                     Action = c =>
                     {
-                        Task.Run(() => _typer!.Type(text, _beginTypeDelay));
+                        string vt = GetVerseText(text);
+                        if (String.IsNullOrEmpty(vt)) return false;
+                        Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
                         return true;
                     },
                 });
@@ -77,13 +90,41 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
                     IcoPath = _icon_path,
                     Action = c =>
                     {
-                        Task.Run(() => RunAsSTAThread(() => _typer.TypeClipboard(_beginTypeDelay)));
+                        var t = _typer.GetClipboard();
+                        if(String.IsNullOrEmpty(t)) return false;
+                        string vt = GetVerseText(t);
+                        if (String.IsNullOrEmpty(vt)) return false;
+
+                        Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
+                        //Task.Run(() => RunAsSTAThread(() => _typer.TypeClipboard(_beginTypeDelay)));
                         return true;
                     }
                 }) ;
             }
 
             return results;
+        }
+
+        private string GetVerseText(string input)
+        {
+            int ret = VerseLink.VerseLinkInit();
+            if (ret != 0) return "";
+
+            _verseText.Clear();
+            _errMsg.Clear();
+
+            int retrieveResult = VerseLink.VerseLinkRetrieve(input, _bibleversion, _verseText, _verseText.Capacity, _errMsg, _errMsg.Capacity);
+            if (retrieveResult == 0)
+            {
+                string vt = _verseText.ToString();
+                return vt;
+            }
+            else
+            {
+                string error = _errMsg.ToString();
+                Console.WriteLine($"Error retrieving verse: {error}");
+                return "";
+            }
         }
 
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
@@ -93,14 +134,8 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
 
         private void UpdateIconPath(Theme theme)
         {
-            if (theme == Theme.Light || theme == Theme.HighContrastWhite)
-            {
-                _icon_path = "Images/VerseLink.light.png";
-            }
-            else
-            {
-                _icon_path = "Images/VerseLink.dark.png";
-            }
+            _icon_path = (theme == Theme.Light || theme == Theme.HighContrastWhite) ?
+                "Images/VerseLink.light.png" : "Images/VerseLink.dark.png";
         }
 
         public System.Windows.Controls.Control CreateSettingPanel()
@@ -110,13 +145,11 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
 
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
-            if (settings?.AdditionalOptions is null)
-            {
-                return;
-            }
+            if (settings?.AdditionalOptions is null) return;
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BeginTypeDelay");
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
+            _bibleversion = "KJV";//work here to load from settings
         }
 
         /// <summary>

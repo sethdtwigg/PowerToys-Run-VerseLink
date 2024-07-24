@@ -3,7 +3,7 @@
 
 using Clipboard = System.Windows.Clipboard;
 
-namespace Community.PowerToys.Run.Plugin.InputTyper
+namespace Community.PowerToys.Run.Plugin.VerseLink
 {
     internal sealed class Typer
     {
@@ -41,6 +41,11 @@ namespace Community.PowerToys.Run.Plugin.InputTyper
 
             var text = Clipboard.GetText();
             Type(text, beginTypeDelay);
+        }
+
+        internal string GetClipboard()
+        {
+            return (Clipboard.ContainsText()) ? Clipboard.GetText() : "";
         }
     }
 }
