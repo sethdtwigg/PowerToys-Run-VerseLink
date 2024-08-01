@@ -1,6 +1,6 @@
 # PowerToys Run: Verse Link plugin
 
-Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin for easily typing input as if from a keyboard. Ideal for remote environments and other scenarios where pasting isn't possible.
+Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin to insert the text of a Bible verse(s) when given a valid Bible Reference.
 
 ## Requirements
 
@@ -14,11 +14,11 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 - Open PowerToys
 
 ## Usage
-- Select/Place cursor where text should be typed 
+- Select/Place cursor where text should be placed 
 - Open PowerToys Run
 - Input: "^^ \<reference\>" or "^^" for clipboard
 - Select the result (ENTER)
-- \<verse\> is typed into the selected location
+- \<verse\> is placed into the selected location
 
 ## Credit
 - This is a fork of Corey Hayward's InsertText Project
