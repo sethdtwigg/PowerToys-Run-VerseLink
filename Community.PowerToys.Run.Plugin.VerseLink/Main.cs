@@ -9,6 +9,9 @@ using System.Text;
 using System;
 using Wox.Plugin;
 using static System.Net.Mime.MediaTypeNames;
+using Wox.Plugin.Logger;
+using System.IO;
+using VerseLinkWindows;
 
 namespace Community.PowerToys.Run.Plugin.VerseLink
 {
@@ -19,8 +22,10 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         private string _icon_path;
         private int _beginTypeDelay;
         private string _bibleversion;
-        private StringBuilder _verseText;
-        private StringBuilder _errMsg;
+        private string _verseText;
+        private string _errMsg;
+        private VerseLinkWindows.VerseLink _VL;
+        private VerseLinkWindows.BibleReferenceVerseFormat _BibleReferenceVerseFormat;
 
         public string Name => "VerseLink";
 
@@ -56,8 +61,15 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
             _context.API.ThemeChanged += OnThemeChanged;
             UpdateIconPath(_context.API.GetCurrentTheme());
 
-            _verseText = new StringBuilder(5000000);
-            _errMsg = new StringBuilder(256);
+            string currPath = _context.CurrentPluginMetadata.ExecuteFilePath;
+            string _bibleXml_path = Path.GetDirectoryName(currPath) ?? "";
+
+            _VL = new VerseLinkWindows.VerseLink(_bibleversion, _bibleXml_path, _BibleReferenceVerseFormat);
+            if (_VL.Error)
+            {
+                string error = _VL.LastError;
+                Log.Exception(error, new Exception("VerseLinkWindows.VerseLink(_bibleversion)"),this.GetType(), "Init", "Main.cs", 61);
+            }
         }
 
         public List<Result> Query(Query query)
@@ -76,7 +88,14 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                     {
                         string vt = GetVerseText(text);
                         if (String.IsNullOrEmpty(vt)) return false;
-                        Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
+                        if(_beginTypeDelay == 0)
+                        {
+                            Task.Run(() => _typer!.Paste(vt));
+                        }
+                        else
+                        {
+                            Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
+                        }                        
                         return true;
                     },
                 });
@@ -95,7 +114,14 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                         string vt = GetVerseText(t);
                         if (String.IsNullOrEmpty(vt)) return false;
 
-                        Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
+                        if (_beginTypeDelay == 0)
+                        {
+                            Task.Run(() => _typer!.Paste(vt));
+                        }
+                        else
+                        {
+                            Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
+                        }
                         //Task.Run(() => RunAsSTAThread(() => _typer.TypeClipboard(_beginTypeDelay)));
                         return true;
                     }
@@ -107,24 +133,16 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
         private string GetVerseText(string input)
         {
-            int ret = VerseLink.VerseLinkInit();
-            if (ret != 0) return "";
+            _verseText = "";
+            _errMsg = "";
 
-            _verseText.Clear();
-            _errMsg.Clear();
-
-            int retrieveResult = VerseLink.VerseLinkRetrieve(input, _bibleversion, _verseText, _verseText.Capacity, _errMsg, _errMsg.Capacity);
-            if (retrieveResult == 0)
+            _verseText = _VL.VerseLinkRetrieve(input);
+            if (_VL.Error)
             {
-                string vt = _verseText.ToString();
-                return vt;
+                string error = _VL.LastError;
+                Log.Exception(error, new Exception("_VL.VerseLinkRetrieve(input)"), this.GetType(), "GetVerseText", "Main.cs", 119);
             }
-            else
-            {
-                string error = _errMsg.ToString();
-                Console.WriteLine($"Error retrieving verse: {error}");
-                return "";
-            }
+            return _verseText;
         }
 
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
@@ -149,7 +167,12 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BeginTypeDelay");
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
-            _bibleversion = "KJV";//work here to load from settings
+            //work here to load below from settings
+            _bibleversion = "KJV";
+            _BibleReferenceVerseFormat = new BibleReferenceVerseFormat();
+            _BibleReferenceVerseFormat.IncludeReference = true;
+            _BibleReferenceVerseFormat.IncludeVerseNumbers = true;
+            _BibleReferenceVerseFormat.IncludeNewLineBetweenChapters = false;
         }
 
         /// <summary>

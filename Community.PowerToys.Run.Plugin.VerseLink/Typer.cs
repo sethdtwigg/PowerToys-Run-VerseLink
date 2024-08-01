@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Seth Twigg. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Windows;
 using Clipboard = System.Windows.Clipboard;
 
 namespace Community.PowerToys.Run.Plugin.VerseLink
@@ -46,6 +47,16 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         internal string GetClipboard()
         {
             return (Clipboard.ContainsText()) ? Clipboard.GetText() : "";
+        }
+
+        internal void Paste(string text)
+        {
+            Thread thread = new Thread(() => Clipboard.SetText(text));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+     
+            SendKeys.SendWait("^{v}");
         }
     }
 }

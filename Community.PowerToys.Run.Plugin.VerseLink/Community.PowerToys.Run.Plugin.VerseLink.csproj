@@ -37,6 +37,9 @@
     <Reference Include="PowerToys.Settings.UI.Lib">
       <HintPath>Libs\x64\PowerToys.Settings.UI.Lib.dll</HintPath>
     </Reference>
+    <Reference Include="VerseLinkWindows">
+      <HintPath>Libs\x64\VerseLinkWindows.dll</HintPath>
+    </Reference>
     <Reference Include="Wox.Infrastructure">
       <HintPath>Libs\x64\Wox.Infrastructure.dll</HintPath>
     </Reference>
@@ -53,9 +56,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Libs\x64\PowerToys.Settings.UI.Lib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Libs\x64\VerseLink.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Libs\x64\Wox.Infrastructure.dll">
