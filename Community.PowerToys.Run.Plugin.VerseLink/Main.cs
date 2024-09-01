@@ -26,6 +26,12 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         private string _errMsg;
         private VerseLinkWindows.VerseLink _VL;
         private VerseLinkWindows.BibleReferenceVerseFormat _BibleReferenceVerseFormat;
+        private Dictionary<string, string> _bibleVersions = new Dictionary<string, string>()
+        {
+            { "ESV" ,"0"},
+            { "KJV" ,"1"},
+            { "NASB","2" }
+        };
 
         public string Name => "VerseLink";
 
@@ -43,14 +49,44 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                 NumberValue = 0,
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
             },
-            //new PluginAdditionalOption()
-            //{
-            //    Key = "BibleVersion",
-            //    DisplayLabel = "Bible Version",
-            //    DisplayDescription = "Select the Bible Translation you would like the verse to be typed.",
-            //    NumberValue = 0,
-            //    PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
-            //}
+            new PluginAdditionalOption()
+            {
+                Key = "BibleVersion",
+                DisplayLabel = "Bible Version",
+                DisplayDescription = "The Bible Translation Version that will be used to type the verses.",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Combobox,
+                ComboBoxItems =
+                [
+                    _bibleVersions.ElementAt(0),
+                    _bibleVersions.ElementAt(1),
+                    _bibleVersions.ElementAt(2)
+                ],
+                ComboBoxValue = 1
+            },
+            new PluginAdditionalOption()
+            {
+                Key = "IncludeReference",
+                DisplayLabel = "Include Reference",
+                DisplayDescription = "Whether to include the Verse Reference when typing the verse.",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = true
+            },
+            new PluginAdditionalOption()
+            {
+                Key = "IncludeVerseNumbers",
+                DisplayLabel = "Include Verse Numbers",
+                DisplayDescription = "Whether to include the Verse Numbers when typing the verse.",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = true
+            },
+            new PluginAdditionalOption()
+            {
+                Key = "NewLineBetweenChapters",
+                DisplayLabel = "Include New-Line Between Chapters",
+                DisplayDescription = "Whether to include a blank line between chapters when typing the verse.",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = false
+            }
         };
 
         public void Init(PluginInitContext context)
@@ -167,12 +203,17 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BeginTypeDelay");
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
-            //work here to load below from settings
-            _bibleversion = "KJV";
+            int bv = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BibleVersion")?.ComboBoxValue ?? 0;
+            _bibleversion = _bibleVersions.FirstOrDefault(x => x.Value == bv.ToString()).Key;
+
             _BibleReferenceVerseFormat = new BibleReferenceVerseFormat();
-            _BibleReferenceVerseFormat.IncludeReference = true;
-            _BibleReferenceVerseFormat.IncludeVerseNumbers = true;
-            _BibleReferenceVerseFormat.IncludeNewLineBetweenChapters = false;
+
+            var ir = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "IncludeReference");
+            _BibleReferenceVerseFormat.IncludeReference = ir?.Value ?? true;
+            var ivn = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "IncludeVerseNumbers");
+            _BibleReferenceVerseFormat.IncludeVerseNumbers = ivn?.Value ?? true;
+            var inlbc = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "NewLineBetweenChapters");
+            _BibleReferenceVerseFormat.IncludeNewLineBetweenChapters = inlbc?.Value ?? true;
         }
 
         /// <summary>
