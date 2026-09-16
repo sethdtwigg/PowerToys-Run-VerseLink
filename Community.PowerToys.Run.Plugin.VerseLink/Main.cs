@@ -15,9 +15,10 @@ using VerseLinkWindows;
 
 namespace Community.PowerToys.Run.Plugin.VerseLink
 {
-    public class Main : IPlugin, ISettingProvider
+    public class Main : IPlugin, ISettingProvider, IDisposable
     {
         private Typer _typer = new Typer();
+        private bool _disposed;
         private PluginInitContext _context;
         private string _icon_path;
         private int _beginTypeDelay;
@@ -255,6 +256,24 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
             // VerseLink caches the version XML and the format object, so it must be rebuilt.
             RebuildVerseLink();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed || !disposing) return;
+
+            if (_context?.API is not null)
+            {
+                _context.API.ThemeChanged -= OnThemeChanged;
+            }
+
+            _disposed = true;
         }
 
         /// <summary>

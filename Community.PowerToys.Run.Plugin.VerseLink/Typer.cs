@@ -11,6 +11,10 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         private readonly char[] _specialCharacters = { '{', '}', '+', '^', '%', '~', '(', ')'  };
         private const int INTERKEYDELAY = 0;
 
+        // How long the pasted text stays on the clipboard before the previous contents
+        // are put back. Restoring immediately would race the target app's paste.
+        private const int CLIPBOARDRESTOREDELAY = 300;
+
         public bool TypeEnter { get; set; } = true;
 
         public void Type(string str, int delay = 2000)
@@ -46,17 +50,56 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
         internal string GetClipboard()
         {
-            return (Clipboard.ContainsText()) ? Clipboard.GetText() : "";
+            var text = "";
+            // Callers may be on a thread pool thread; the clipboard requires STA.
+            RunOnSTAThread(() => text = Clipboard.ContainsText() ? Clipboard.GetText() : "");
+            return text;
         }
 
         internal void Paste(string text)
         {
-            Thread thread = new Thread(() => Clipboard.SetText(text));
+            var previous = GetClipboard();
+
+            SetClipboard(text);
+            SendKeys.SendWait("^{v}");
+
+            // Hand the user their clipboard back rather than leaving the verse on it.
+            Thread.Sleep(CLIPBOARDRESTOREDELAY);
+            SetClipboard(previous);
+        }
+
+        private static void SetClipboard(string text)
+        {
+            RunOnSTAThread(() =>
+            {
+                if (String.IsNullOrEmpty(text))
+                {
+                    Clipboard.Clear();
+                }
+                else
+                {
+                    Clipboard.SetText(text);
+                }
+            });
+        }
+
+        private static void RunOnSTAThread(Action action)
+        {
+            Thread thread = new Thread(() =>
+            {
+                // The clipboard can be locked by another process; a failed read or write
+                // is not worth tearing down the paste over.
+                try
+                {
+                    action();
+                }
+                catch (Exception)
+                {
+                }
+            });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
-     
-            SendKeys.SendWait("^{v}");
         }
     }
 }

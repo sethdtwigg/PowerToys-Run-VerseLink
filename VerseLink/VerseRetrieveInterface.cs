@@ -49,10 +49,12 @@ namespace VerseLinkWindows
             XElement? book;
             XElement chapter;
             string chapternumberstr;
-            string versenumberstr;
             int startNum;
             int endNum;
             var verseText = String.Empty;
+
+            // loadBibleVersion leaves BibleXML null when the version file failed to load.
+            if (BibleXML is null) return String.Empty;
 
             book = getElementByN(BibleXML, "b", b.getBookName());
             if (book.IsEmpty) { return String.Empty; }
@@ -61,9 +63,10 @@ namespace VerseLinkWindows
             {
                 case BibleReferenceType.SingleVerse:
                     chapternumberstr = b.getChapterVerse(0).Chapter;
-                    versenumberstr = b.getChapterVerse(0).Verse;
+                    startNum = b.getChapterVerse(0, true).Verse;
                     chapter = getElementByN(book, "c", chapternumberstr);
-                    verseText = getElementByN(chapter, "v",versenumberstr).Value ?? String.Empty;
+                    // Routed through formatVerse so IncludeVerseNumbers applies here too.
+                    verseText = formatVerse(getElementByNtoN(chapter, "v", startNum, startNum));
                     break;
                 case BibleReferenceType.VerseRange:
                     chapternumberstr = b.getChapterVerse(0).Chapter;
@@ -77,7 +80,13 @@ namespace VerseLinkWindows
                     endNum = b.getChapterVerse(-1, true).Chapter;
                     while (startNum <= endNum)
                     {
-                        verseText += formatVerse(getElementByN(book, "c", startNum.ToString()).Descendants(), VerseReferenceVerseFormat.IncludeNewLineBetweenChapters);
+                        // Without a separator the last verse of one chapter runs straight
+                        // into the first verse of the next.
+                        if (verseText.Length > 0)
+                        {
+                            verseText += VerseReferenceVerseFormat.IncludeNewLineBetweenChapters ? "\n" : " ";
+                        }
+                        verseText += formatVerse(getElementByN(book, "c", startNum.ToString()).Descendants());
                         startNum++;
                     }
                     break;
@@ -103,12 +112,18 @@ namespace VerseLinkWindows
             return (VerseReferenceVerseFormat.IncludeReference) ? String.Concat(b.getReference()," ",verseText) : verseText;
         }
 
+        // Returned when a book/chapter/verse is absent. IsEmpty is true for it, which is
+        // what the callers test. XElement.EmptySequence.First() would throw instead.
+        private static XElement NotFound => new XElement("notfound");
+
         private XElement getElementByN(XElement xe, string descendant, string n)
         {
             if (xe.IsEmpty) return xe;
-            XElement? node = xe.Descendants(descendant).FirstOrDefault(x => x.Attribute("n")?.Value == n);
-            if (node == null) return XElement.EmptySequence.First();
-            return node;
+            // Book names are matched case insensitively to line up with the IgnoreCase
+            // reference patterns; chapter and verse numbers are unaffected by casing.
+            XElement? node = xe.Descendants(descendant)
+                .FirstOrDefault(x => String.Equals(x.Attribute("n")?.Value, n, StringComparison.OrdinalIgnoreCase));
+            return node ?? NotFound;
         }
 
         private IEnumerable<XElement> getElementByNtoN(XElement xe, string descendant, int startN, int endN)
@@ -121,12 +136,12 @@ namespace VerseLinkWindows
             return node;
         }
 
-        private string formatVerse(IEnumerable<XElement> nodes,bool includeEndingNewLine = false)
-        {            
-            string v = (VerseReferenceVerseFormat.IncludeVerseNumbers) ? 
-                String.Join(" ", nodes.Select(v => String.Concat(v.Attribute("v")," ",v.Value))) : 
-                String.Join(" ", nodes.Select(v => v.Value));
-            return includeEndingNewLine ? String.Concat(v,'\n') : v.Trim();
+        private string formatVerse(IEnumerable<XElement> nodes)
+        {
+            string v = (VerseReferenceVerseFormat.IncludeVerseNumbers) ?
+                String.Join(" ", nodes.Select(node => String.Concat(node.Attribute("n")?.Value, " ", node.Value))) :
+                String.Join(" ", nodes.Select(node => node.Value));
+            return v.Trim();
         }
     }
 }

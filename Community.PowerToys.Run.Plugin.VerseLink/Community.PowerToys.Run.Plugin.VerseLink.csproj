@@ -37,15 +37,37 @@
     <Reference Include="PowerToys.Settings.UI.Lib">
       <HintPath>Libs\x64\PowerToys.Settings.UI.Lib.dll</HintPath>
     </Reference>
-    <Reference Include="VerseLinkWindows">
-      <HintPath>Libs\x64\VerseLinkWindows.dll</HintPath>
-    </Reference>
     <Reference Include="Wox.Infrastructure">
       <HintPath>Libs\x64\Wox.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Wox.Plugin">
       <HintPath>Libs\x64\Wox.Plugin.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Built from source rather than consumed as a checked in DLL, so changes to the
+         VerseLink library reach the plugin without a manual copy. -->
+    <ProjectReference Include="..\VerseLink\VerseLinkWindows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PowerToys Run will not load a plugin without its manifest, and the manifest
+         points at these icons. Both have to sit next to the built DLL. -->
+    <None Update="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Bible texts are not redistributed in this repo; see the README. Any XML dropped
+         into Bibles\ is packaged next to the plugin, which is where it is loaded from. -->
+    <None Include="Bibles\**\*.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

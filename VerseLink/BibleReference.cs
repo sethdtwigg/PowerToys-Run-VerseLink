@@ -25,10 +25,16 @@
             Reference = reference;
             if (!String.IsNullOrEmpty(Reference))
             {
-                var r = reference.Split(' ');
-                bool hasBookPrefix = (reference[0].Equals('1') || reference[0].Equals(2));
-                BookName = hasBookPrefix ? String.Join(' ', r.Take(2)) : r.ElementAt(0);
-                reference =  hasBookPrefix ? r.ElementAt(2) : r.ElementAt(1);
+                // The chapter/verse spec is always the last space separated token, so
+                // everything before it is the book name. That covers numbered books
+                // ("1 John", "2 Timothy") and multi word books ("Song of Solomon")
+                // without special casing either.
+                var r = reference.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (r.Length >= 2)
+                {
+                    BookName = String.Join(' ', r.Take(r.Length - 1));
+                    reference = r[r.Length - 1];
+                }
             }
 
             ChapterVerse = [];

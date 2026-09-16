@@ -9,10 +9,14 @@ namespace VerseLinkWindows
         
         private VerseRetrieveInterface vli;
 
-        private const string SINGLE_VERSE_PATTERN = @"^([1?2?] )?[a-z]+ [0-9]{1,3}:[0-9]{1,3}$";
-        private const string VERSE_RANGE_PATTERN = @"^([1?2?] )?[a-z]+ [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}$";
-        private const string CHAPTER_RANGE_PATTERN = @"^([1?2?] )?[a-z]+ [0-9]{1,3}-[0-9]{1,3}$";
-        private const string CHAPTER_VERSE_RANGE_PATTERN = @"^([1?2?] )?[a-z]+ [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}:[0-9]{1,3}$";
+        // An optional 1/2 prefix followed by one or more words, so both "2 Timothy" and
+        // "Song of Solomon" parse. The old [1?2?] was a character class of 1, ? and 2.
+        private const string BOOK_PATTERN = @"(?:[12] )?[a-z]+(?: [a-z]+)*";
+
+        private const string SINGLE_VERSE_PATTERN = @"^" + BOOK_PATTERN + @" [0-9]{1,3}:[0-9]{1,3}$";
+        private const string VERSE_RANGE_PATTERN = @"^" + BOOK_PATTERN + @" [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}$";
+        private const string CHAPTER_RANGE_PATTERN = @"^" + BOOK_PATTERN + @" [0-9]{1,3}-[0-9]{1,3}$";
+        private const string CHAPTER_VERSE_RANGE_PATTERN = @"^" + BOOK_PATTERN + @" [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3}:[0-9]{1,3}$";
 
         private Regex singleVerseRegex;
         private Regex verseRangeRegex;

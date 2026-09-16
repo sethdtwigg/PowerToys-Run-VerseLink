@@ -365,7 +365,7 @@ FodyWeavers.xsd
 .idea/
 
 # Release build outputs
-InputTyper*.zip
+VerseLink*.zip
 
 # Include dependecies
 !*/Libs/x64
