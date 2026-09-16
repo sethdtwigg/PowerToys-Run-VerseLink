@@ -98,7 +98,12 @@ namespace VerseLinkWindows
                     ++startNum;
                     while (startNum <= endNum)
                     {
-                        if (VerseReferenceVerseFormat.IncludeNewLineBetweenChapters) verseText += '\n';
+                        // Same separator rule as ChapterRange: without it the last verse
+                        // of one chapter runs into the first verse of the next.
+                        if (verseText.Length > 0)
+                        {
+                            verseText += VerseReferenceVerseFormat.IncludeNewLineBetweenChapters ? "\n" : " ";
+                        }
                         chapter = getElementByN(book, "c", startNum.ToString());
                         int endVerse = (startNum == endNum) ? b.getChapterVerse(-1, true).Verse : -1;
                         verseText += formatVerse(getElementByNtoN(chapter, "v", 1, endVerse));

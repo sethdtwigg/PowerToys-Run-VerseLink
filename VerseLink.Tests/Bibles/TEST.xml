@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fixture for the VerseLink tests. Deliberately tiny and not real scripture, so the
+  expected strings in the tests stay readable and do not drift if the bundled KJV is
+  ever replaced. Book names mirror the shapes that matter: a plain name, a numbered
+  prefix (1/2/3) and a multi word name.
+-->
+<bible>
+  <b n="Genesis">
+    <c n="1">
+      <v n="1">alpha one</v>
+      <v n="2">alpha two</v>
+      <v n="3">alpha three</v>
+    </c>
+    <c n="2">
+      <v n="1">beta one</v>
+      <v n="2">beta two</v>
+    </c>
+    <c n="3">
+      <v n="1">gamma one</v>
+    </c>
+  </b>
+  <b n="1 Samuel">
+    <c n="1">
+      <v n="1">first samuel text</v>
+    </c>
+  </b>
+  <b n="2 Timothy">
+    <c n="3">
+      <v n="16">second timothy text</v>
+    </c>
+  </b>
+  <b n="3 John">
+    <c n="1">
+      <v n="4">third john text</v>
+    </c>
+  </b>
+  <b n="Song of Solomon">
+    <c n="1">
+      <v n="1">song of solomon text</v>
+    </c>
+  </b>
+</bible>

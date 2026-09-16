@@ -15,8 +15,6 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         // are put back. Restoring immediately would race the target app's paste.
         private const int CLIPBOARDRESTOREDELAY = 300;
 
-        public bool TypeEnter { get; set; } = true;
-
         public void Type(string str, int delay = 2000)
         {
             Thread.Sleep(delay);
@@ -35,17 +33,6 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                
                 Thread.Sleep(INTERKEYDELAY);
             }
-        }
-
-        internal void TypeClipboard(int beginTypeDelay)
-        {
-            if (!Clipboard.ContainsText())
-            {
-                return;
-            }
-
-            var text = Clipboard.GetText();
-            Type(text, beginTypeDelay);
         }
 
         internal string GetClipboard()

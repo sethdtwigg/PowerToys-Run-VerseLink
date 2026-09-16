@@ -19,12 +19,10 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
     {
         private Typer _typer = new Typer();
         private bool _disposed;
-        private PluginInitContext _context;
-        private string _icon_path;
+        private PluginInitContext? _context;
+        private string _icon_path = "";
         private int _beginTypeDelay;
         private string _bibleversion = DefaultBibleVersion;
-        private string _verseText;
-        private string _errMsg;
         private VerseLinkWindows.VerseLink? _VL;
         private string? _bibleXml_path;
 
@@ -193,7 +191,6 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                         {
                             Task.Run(() => _typer!.Type(vt, _beginTypeDelay));
                         }
-                        //Task.Run(() => RunAsSTAThread(() => _typer.TypeClipboard(_beginTypeDelay)));
                         return true;
                     }
                 }) ;
@@ -204,18 +201,15 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
         private string GetVerseText(string input)
         {
-            _verseText = "";
-            _errMsg = "";
-
             if (_VL is null) return String.Empty;
 
-            _verseText = _VL.VerseLinkRetrieve(input);
+            var verseText = _VL.VerseLinkRetrieve(input);
             if (_VL.Error)
             {
                 string error = _VL.LastError;
                 Log.Exception(error, new Exception("_VL.VerseLinkRetrieve(input)"), this.GetType(), "GetVerseText", "Main.cs", 119);
             }
-            return _verseText;
+            return verseText;
         }
 
         private void OnThemeChanged(Theme currentTheme, Theme newTheme)
@@ -274,24 +268,6 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Start an Action within an STA Thread
-        /// </summary>
-        /// <param name="action">The action to execute in the STA thread</param>
-        static void RunAsSTAThread(Action action)
-        {
-            AutoResetEvent @event = new AutoResetEvent(false);
-            Thread thread = new Thread(
-                () =>
-                {
-                    action();
-                    @event.Set();
-                });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            @event.WaitOne();
         }
     }
 }

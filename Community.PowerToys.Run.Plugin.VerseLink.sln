@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.PowerToys.Run.Plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerseLinkWindows", "VerseLink\VerseLinkWindows.csproj", "{45467B14-0F79-4EBA-B761-E49195312FB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerseLink.Tests", "VerseLink.Tests\VerseLink.Tests.csproj", "{A5139D42-21ED-4089-A376-A6EBF8CC4F37}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VerseLink", "VerseLink", "{F13DE7A1-CCB4-E729-DAFD-23BAF55C8E12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,22 @@ Global
 		{45467B14-0F79-4EBA-B761-E49195312FB5}.Release|x64.Build.0 = Release|Any CPU
 		{45467B14-0F79-4EBA-B761-E49195312FB5}.Release|x86.ActiveCfg = Release|Any CPU
 		{45467B14-0F79-4EBA-B761-E49195312FB5}.Release|x86.Build.0 = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|x64.Build.0 = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Debug|x86.Build.0 = Debug|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|ARM64.Build.0 = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|x64.ActiveCfg = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|x64.Build.0 = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|x86.ActiveCfg = Release|Any CPU
+		{A5139D42-21ED-4089-A376-A6EBF8CC4F37}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
