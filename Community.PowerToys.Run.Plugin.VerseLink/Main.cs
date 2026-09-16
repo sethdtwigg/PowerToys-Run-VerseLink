@@ -21,11 +21,27 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
         private PluginInitContext _context;
         private string _icon_path;
         private int _beginTypeDelay;
-        private string _bibleversion;
+        private string _bibleversion = DefaultBibleVersion;
         private string _verseText;
         private string _errMsg;
-        private VerseLinkWindows.VerseLink _VL;
-        private VerseLinkWindows.BibleReferenceVerseFormat _BibleReferenceVerseFormat;
+        private VerseLinkWindows.VerseLink? _VL;
+        private string? _bibleXml_path;
+
+        private const string DefaultBibleVersion = "KJV";
+        private const int DefaultBibleVersionValue = 1;
+        private const bool DefaultIncludeReference = true;
+        private const bool DefaultIncludeVerseNumbers = true;
+        private const bool DefaultNewLineBetweenChapters = false;
+
+        // Seeded with the declared defaults so Init can build a usable VerseLink
+        // even if the host has not called UpdateSettings yet.
+        private VerseLinkWindows.BibleReferenceVerseFormat _BibleReferenceVerseFormat = new BibleReferenceVerseFormat()
+        {
+            IncludeReference = DefaultIncludeReference,
+            IncludeVerseNumbers = DefaultIncludeVerseNumbers,
+            IncludeNewLineBetweenChapters = DefaultNewLineBetweenChapters,
+        };
+
         private Dictionary<string, string> _bibleVersions = new Dictionary<string, string>()
         {
             { "ESV" ,"0"},
@@ -55,13 +71,8 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                 DisplayLabel = "Bible Version",
                 DisplayDescription = "The Bible Translation Version that will be used to type the verses.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Combobox,
-                ComboBoxItems =
-                [
-                    _bibleVersions.ElementAt(0),
-                    _bibleVersions.ElementAt(1),
-                    _bibleVersions.ElementAt(2)
-                ],
-                ComboBoxValue = 1
+                ComboBoxItems = [.. _bibleVersions],
+                ComboBoxValue = DefaultBibleVersionValue
             },
             new PluginAdditionalOption()
             {
@@ -69,7 +80,7 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                 DisplayLabel = "Include Reference",
                 DisplayDescription = "Whether to include the Verse Reference when typing the verse.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-                Value = true
+                Value = DefaultIncludeReference
             },
             new PluginAdditionalOption()
             {
@@ -77,7 +88,7 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                 DisplayLabel = "Include Verse Numbers",
                 DisplayDescription = "Whether to include the Verse Numbers when typing the verse.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-                Value = true
+                Value = DefaultIncludeVerseNumbers
             },
             new PluginAdditionalOption()
             {
@@ -85,7 +96,7 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
                 DisplayLabel = "Include New-Line Between Chapters",
                 DisplayDescription = "Whether to include a blank line between chapters when typing the verse.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-                Value = false
+                Value = DefaultNewLineBetweenChapters
             }
         };
 
@@ -98,14 +109,37 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
             UpdateIconPath(_context.API.GetCurrentTheme());
 
             string currPath = _context.CurrentPluginMetadata.ExecuteFilePath;
-            string _bibleXml_path = Path.GetDirectoryName(currPath) ?? "";
+            _bibleXml_path = Path.GetDirectoryName(currPath) ?? "";
+
+            RebuildVerseLink();
+        }
+
+        /// <summary>
+        /// (Re)creates the VerseLink instance from the current version and format settings.
+        /// VerseLink loads the version XML and captures the format object once, in its
+        /// constructor, so it has to be rebuilt whenever either of those changes.
+        /// </summary>
+        private void RebuildVerseLink()
+        {
+            // Init supplies the path; until it has run there is nothing to load from.
+            if (_bibleXml_path is null) return;
 
             _VL = new VerseLinkWindows.VerseLink(_bibleversion, _bibleXml_path, _BibleReferenceVerseFormat);
             if (_VL.Error)
             {
                 string error = _VL.LastError;
-                Log.Exception(error, new Exception("VerseLinkWindows.VerseLink(_bibleversion)"),this.GetType(), "Init", "Main.cs", 61);
+                Log.Exception(error, new Exception("VerseLinkWindows.VerseLink(_bibleversion)"), this.GetType(), "RebuildVerseLink", "Main.cs", 0);
             }
+        }
+
+        /// <summary>
+        /// Maps a BibleVersion combo box value onto a version name, falling back to the
+        /// default for any value that is not in _bibleVersions.
+        /// </summary>
+        private string ResolveBibleVersion(int comboBoxValue)
+        {
+            // FirstOrDefault over KeyValuePair yields default(KeyValuePair), whose Key is null.
+            return _bibleVersions.FirstOrDefault(x => x.Value == comboBoxValue.ToString()).Key ?? DefaultBibleVersion;
         }
 
         public List<Result> Query(Query query)
@@ -172,6 +206,8 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
             _verseText = "";
             _errMsg = "";
 
+            if (_VL is null) return String.Empty;
+
             _verseText = _VL.VerseLinkRetrieve(input);
             if (_VL.Error)
             {
@@ -203,17 +239,22 @@ namespace Community.PowerToys.Run.Plugin.VerseLink
 
             var typeDelay = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BeginTypeDelay");
             _beginTypeDelay = (int)(typeDelay?.NumberValue ?? 200);
-            int bv = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BibleVersion")?.ComboBoxValue ?? 0;
-            _bibleversion = _bibleVersions.FirstOrDefault(x => x.Value == bv.ToString()).Key;
+            int bv = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "BibleVersion")?.ComboBoxValue ?? DefaultBibleVersionValue;
+            _bibleversion = ResolveBibleVersion(bv);
 
-            _BibleReferenceVerseFormat = new BibleReferenceVerseFormat();
+            var format = new BibleReferenceVerseFormat();
 
             var ir = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "IncludeReference");
-            _BibleReferenceVerseFormat.IncludeReference = ir?.Value ?? true;
+            format.IncludeReference = ir?.Value ?? DefaultIncludeReference;
             var ivn = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "IncludeVerseNumbers");
-            _BibleReferenceVerseFormat.IncludeVerseNumbers = ivn?.Value ?? true;
+            format.IncludeVerseNumbers = ivn?.Value ?? DefaultIncludeVerseNumbers;
             var inlbc = settings.AdditionalOptions.FirstOrDefault(x => x.Key == "NewLineBetweenChapters");
-            _BibleReferenceVerseFormat.IncludeNewLineBetweenChapters = inlbc?.Value ?? true;
+            format.IncludeNewLineBetweenChapters = inlbc?.Value ?? DefaultNewLineBetweenChapters;
+
+            _BibleReferenceVerseFormat = format;
+
+            // VerseLink caches the version XML and the format object, so it must be rebuilt.
+            RebuildVerseLink();
         }
 
         /// <summary>
