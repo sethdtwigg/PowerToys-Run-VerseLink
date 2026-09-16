@@ -16,16 +16,16 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) plugin
 ## Bible texts
 
 The plugin reads its verse text from `Bibles\<VERSION>.xml`, next to the plugin DLL.
-Those files are **not** included in this repository, because most modern translations
-are copyrighted and cannot be redistributed.
 
-To build a working plugin, create a `Community.PowerToys.Run.Plugin.VerseLink\Bibles\`
-folder and add one XML file per translation you are licensed to use, named to match the
-Bible Version setting (`KJV.xml`, `ESV.xml`, `NASB.xml`). Anything in that folder is
-copied to the build output and packaged by `Build.ps1`.
+**KJV is bundled** — `Community.PowerToys.Run.Plugin.VerseLink\Bibles\KJV.xml` ships with
+the plugin and works out of the box. (The KJV is public domain in the United States. In
+the UK it is under perpetual Crown copyright administered by Cambridge University Press.)
 
-The KJV is in the public domain. ESV and NASB are not — obtain them under their
-respective publishers' licensing terms.
+**ESV and NASB are not bundled.** Both are copyrighted and cannot be redistributed here.
+To use them, add `ESV.xml` / `NASB.xml` to that same `Bibles\` folder under whatever
+licence you hold. Anything in the folder is copied to the build output and packaged by
+`Build.ps1`. Selecting a translation whose file is absent leaves the plugin unable to
+resolve any reference.
 
 Expected shape:
 
